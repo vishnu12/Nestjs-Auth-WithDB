@@ -4,7 +4,6 @@ export class CreateUserDto{
     name:string
     email:string
     password:string
-    comparePassword:(enteredPassword:string)=>Promise<boolean>
 }
 
 export class LoginUserDto{

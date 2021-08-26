@@ -1,14 +1,15 @@
 import { Module } from '@nestjs/common';
 import {MongooseModule} from '@nestjs/mongoose'
 import { AuthModule } from 'src/auth/auth.module';
+import { PostModule } from 'src/post/post.module';
 import { UserModule } from 'src/user/user.module';
-import { AppService } from './app.service';
 
 @Module({
   imports: [
     MongooseModule.forRoot('mongodb://localhost:27017/nest-test-auth'),
     UserModule,
-    AuthModule
+    AuthModule,
+    PostModule
   ],
   controllers:[],
 })

@@ -9,7 +9,7 @@ export type PostDocument=Post & Document
 export class Post{
   
     @Prop({required:true})
-    content:string
+    post:string
 
     @Prop({type:mongoose.Schema.Types.ObjectId,ref:'User'})
     user:User
