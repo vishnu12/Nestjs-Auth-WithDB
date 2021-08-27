@@ -1,9 +1,11 @@
-import { Body, Controller, Param, Post, Put, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Param, Post, Put, Request, UseGuards,Get, HttpException, Delete } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { isTaskOwner } from 'src/utils/helpers';
 import { CreatePostDto } from './dto/post.dto';
 import { PostService } from './post.service';
 
-@Controller('post')
+
+@Controller('posts')
 export class PostController {
     constructor(
         private readonly postService:PostService
@@ -19,12 +21,51 @@ export class PostController {
       return await this.postService.create(post)
     }
 
+    @UseGuards(JwtAuthGuard)
+    @Get()
+    async getPosts():Promise<CreatePostDto[]>{
+       return await this.postService.getPosts()
+    }
+
+    @Get('/:id')
+    @UseGuards(JwtAuthGuard)
+    async getPostById(
+        @Param('id') id:string
+    ):Promise<CreatePostDto>{
+      return await this.postService.getPostById(id)
+    }
 
     @UseGuards(JwtAuthGuard)
     @Put('/:id')
     async update(
-        @Param('id') id:string
+        @Param('id') id:string,
+        @Request() req,
+        @Body() body:CreatePostDto
     ){
-        return await this.postService.update(id)
+        const {user}=await this.getPostById(id) as CreatePostDto
+        if(isTaskOwner(req.user.id,user)){
+            return await this.postService.update(id,body)
+        }else{
+            throw new HttpException('You are not the task owner to update this post',401)
+        }
+        
     }
+
+    @UseGuards(JwtAuthGuard)
+    @Delete('/:id')
+    async delete(
+        @Param('id') id:string,
+        @Request() req
+    ){
+        const {user}=await this.getPostById(id) as CreatePostDto
+        if(isTaskOwner(req.user.id,user)){
+            return await this.postService.delete(id)
+        }else{
+            throw new HttpException('You are not the task owner to delete this post',401)
+        }
+        
+    }
+    
+
+
 }

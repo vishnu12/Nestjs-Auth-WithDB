@@ -19,11 +19,29 @@ export class PostService {
       }
     }
 
-    update(id:string){
-      return {message:'route called for id'+id}
+    async getPosts():Promise<CreatePostDto[]>{
+       return await this.postModel.find({})
     }
 
-    delete(){
+    async getPostById(id:string):Promise<CreatePostDto>{
+      return await this.postModel.findById(id)
+    }
 
+    async update(id:string,body:CreatePostDto):Promise<any>{
+        try {
+          const updatedPost=await this.postModel.findOneAndUpdate({_id:id},{post:body.post},{new:true})
+          return updatedPost
+        } catch (error) {
+          throw new HttpException('Post updation failed',400)
+        }
+    }
+
+    async delete(id:string){
+      try {
+        await this.postModel.findOneAndRemove({_id:id})
+        return {message:'Item removed'}
+      } catch (error) {
+        throw new HttpException('Post deletion failed',400)
+      }
     }
 }

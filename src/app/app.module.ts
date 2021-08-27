@@ -6,7 +6,11 @@ import { UserModule } from 'src/user/user.module';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://localhost:27017/nest-test-auth'),
+    MongooseModule.forRoot('mongodb://localhost:27017/nest-test-auth',{
+      useFindAndModify:false,
+      useUnifiedTopology:true,
+      useNewUrlParser:true
+    }),
     UserModule,
     AuthModule,
     PostModule

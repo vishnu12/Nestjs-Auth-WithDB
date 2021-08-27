@@ -1,6 +1,6 @@
 import * as bcrypt from 'bcryptjs'
 import { HookNextFunction } from 'mongoose'
-import { UserDocument } from 'src/schemas/user/user.schema'
+import { User, UserDocument } from 'src/schemas/user/user.schema'
 
 
 export async function preSaveFunction(next:HookNextFunction){
@@ -16,5 +16,9 @@ const salt=await bcrypt.genSalt(10)
 export async function comparePassword(enteredPassowrd:string){
     let user=this as UserDocument
     return await bcrypt.compare(enteredPassowrd,user.password)
+}
+
+export const isTaskOwner=(loggedInUserID:string,postedUserId:string|User):Boolean=>{
+     return loggedInUserID==postedUserId
 }
 
